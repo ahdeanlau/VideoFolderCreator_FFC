@@ -53,18 +53,26 @@ def create_folder():
     except Exception as e:
         messagebox.showerror("Error", str(e))
 
-def on_entry_click(event):
+def on_entry_click(event, message):
     """Function that gets called whenever entry is clicked."""
-    if file_path_entry.get() == 'Enter file path here...':
-        file_path_entry.delete(0, tk.END)  # delete all the text in the entry
-        file_path_entry.config(fg='white')  # change text color to white
+    event.widget.delete(0, tk.END)  # delete all the text in the entry
+    event.widget.config(fg='white')  # change text color to white
 
-def on_focusout(event):
+def on_focusout(event, message):
     """Function that gets called when focus is moved out of entry field."""
-    if not file_path_entry.get():
-        file_path_entry.insert(0, 'Enter file path here...')
-        file_path_entry.config(fg='grey')
+    if not event.widget.get():
+        event.widget.insert(0, message)
+        event.widget.config(fg='grey')
 
+def on_text_focus_in(event):
+    text_area.delete("1.0", tk.END)  # delete all the text in the text widget
+    text_area.config(fg='white')  # change text color to white
+
+def on_text_focus_out(event):
+    content = text_area.get("1.0", tk.END).strip()
+    if not content:
+        text_area.insert("1.0", message)
+        text_area.config(fg='grey')
 
 # GUI code
 root = tk.Tk()
@@ -80,15 +88,31 @@ file_path_label.grid(row=1, column=0, sticky=tk.W)
 file_path_entry = tk.Entry(frame, width=40)
 file_path_entry.insert(2, 'Enter file path here...')
 file_path_entry.config(fg='grey')
-file_path_entry.bind('<FocusIn>', on_entry_click)
-file_path_entry.bind('<FocusOut>', on_focusout)
+file_path_entry.bind('<FocusIn>', lambda event, message='Enter file path here...': on_entry_click(event, message))
+file_path_entry.bind('<FocusOut>', lambda event, message='Enter file path here...': on_focusout(event, message))
 file_path_entry.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
 
 button = ttk.Button(frame, text="Browse", command = get_directory_location)
 button.grid(row=1, column=0, sticky=tk.E, pady=1)
 
 # To insert video folder name information from Verification Tracker
+message = """Server: http://footfallcounter.com
+Company: SOJAO
+Firmware Version: 4.6.0
+Company Serial: 15F010245232
+Site: Joo Chiat Road
+Device: Maindoor
+Ceiling Height: 4.15
+Device Serial: 1000000099acabaa
+Videos Upload Time: 00:00 - 23:55
+Local Date Time:
+"""
+
 text_area = tk.Text(frame, wrap=tk.WORD, width=40, height=10)
+text_area.insert("1.0", message)
+text_area.config(fg='grey')
+text_area.bind('<FocusIn>', on_text_focus_in)
+text_area.bind('<FocusOut>', on_text_focus_out)
 text_area.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 # To create video folder
