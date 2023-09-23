@@ -20,13 +20,24 @@ def get_directory_location():
 def remove_first_8_chars_serial(serial_number):
     return serial_number[8:]
 
+def simplify_server_name(server_name):
+    """Simplify the server name. The cases are explicitly stated below. Welcome to add new cases if needed"""
+    if server_name.isdigit():
+        return "Other"
+    elif re.search(r"footfall",server_name):
+        return "FFC"
+    else:
+        return server_name
+
 def get_folder_name():
+    """Get the folder name from the input text from the text_area"""
     input_text = text_area.get("1.0", tk.END).strip()
-    server = re.search(r"Server: (http://[^\s]+)", input_text).group(1).split("//")[-1].replace(".", "").replace(":", "")
+    server = simplify_server_name(re.search(r"Server: (http://[^\s]+)", input_text).group(1).split("//")[-1].replace(".com","").replace(".", "").replace(":", ""))
     company = re.search(r"Company: ([^\nFirmware]+)", input_text).group(1).replace(" ", "")
     firmware_version = re.search(r"Firmware Version: ([^\n]+)", input_text).group(1).replace(".", "")
     site = re.search(r"Site: ([^\nDevice]+)", input_text).group(1).replace(" ", "")
     device_serial = remove_first_8_chars_serial(re.search(r"Device Serial: ([^\nVideos]+)", input_text).group(1))
+
 
     # Create the folder name
     folder_name = f"{company}_{site}_{device_serial}_{server}_{firmware_version}"
@@ -84,6 +95,11 @@ def on_text_focus_out(message):
 # GUI code-----------------------------------------------------------------
 root = tk.Tk()
 root.title("Folder Name Converter")
+
+style = ttk.Style()
+
+# Set global background color
+style.configure('.', background='white')
 
 frame = ttk.Frame(root, padding="10")
 frame.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
