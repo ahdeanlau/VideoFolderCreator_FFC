@@ -17,7 +17,6 @@ def get_directory_location():
         # Populate the entry with the selected folder path
         file_path_entry.insert(0, folder_selected)
 
-
 def remove_first_8_chars_serial(serial_number):
     return serial_number[8:]
 
@@ -70,11 +69,12 @@ def on_focusout(event, message):
         event.widget.insert(0, message)
         event.widget.config(fg='grey')
 
-def on_text_focus_in(event):
-    text_area.delete("1.0", tk.END)  # delete all the text in the text widget
-    text_area.config(fg='black')  # change text color to white
+def on_text_focus_in(message):
+    if text_area.get("1.0", tk.END).strip() == message:
+        text_area.delete("1.0", tk.END)  # delete all the text in the text widget
+        text_area.config(fg='black')  # change text color to black
 
-def on_text_focus_out(event):
+def on_text_focus_out(message):
     content = text_area.get("1.0", tk.END).strip()
     if not content:
         text_area.insert("1.0", message)
@@ -111,14 +111,13 @@ Device: Maindoor
 Ceiling Height: 4.15
 Device Serial: 1000000099acabaa
 Videos Upload Time: 00:00 - 23:55
-Local Date Time:
-"""
+Local Date Time:"""
 
 text_area = tk.Text(frame, wrap=tk.WORD, width=40, height=10)
 text_area.insert("1.0", sample_format)
 text_area.config(fg='grey')
-text_area.bind('<FocusIn>', on_text_focus_in)
-text_area.bind('<FocusOut>', on_text_focus_out)
+text_area.bind('<FocusIn>', lambda event: on_text_focus_in(sample_format))
+text_area.bind('<FocusOut>', lambda event: on_text_focus_out(sample_format))
 text_area.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
 # # Show the synthesized folder name
