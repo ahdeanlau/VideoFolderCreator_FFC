@@ -35,14 +35,12 @@ def get_folder_name():
     return folder_name
 
 def create_folder():
-    # Get the base directory
-
     # Create the folder name
     folder_name = get_folder_name()
 
     # Show the synthesized folder name
-    label = tk.Label(root, text=folder_name)
-    label.grid(row=5, column=0, sticky=tk.W)
+    folder_name_label = tk.Label(frame, text=folder_name)
+    folder_name_label.grid(row=5, column=0, sticky=tk.W)
 
     # Get the base directory
     base_directory = file_path_entry.get()
@@ -64,7 +62,7 @@ def create_folder():
 def on_entry_click(event, message):
     """Function that gets called whenever entry is clicked."""
     event.widget.delete(0, tk.END)  # delete all the text in the entry
-    event.widget.config(fg='white')  # change text color to white
+    event.widget.config(fg='black')  # change text color to black
 
 def on_focusout(event, message):
     """Function that gets called when focus is moved out of entry field."""
@@ -123,6 +121,9 @@ text_area.bind('<FocusIn>', on_text_focus_in)
 text_area.bind('<FocusOut>', on_text_focus_out)
 text_area.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
+# # Show the synthesized folder name
+# folder_name_label = tk.Label(frame, text="Hello World")
+# folder_name_label.grid(row=5, column=0, sticky=tk.W)
 
 # To create video folder
 button = ttk.Button(frame, text="Create Video Folder", command = create_folder)
