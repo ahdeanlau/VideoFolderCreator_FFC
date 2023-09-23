@@ -60,8 +60,9 @@ def create_folder():
 
 def on_entry_click(event, message):
     """Function that gets called whenever entry is clicked."""
-    event.widget.delete(0, tk.END)  # delete all the text in the entry
-    event.widget.config(fg='black')  # change text color to black
+    if event.widget.get().strip() == message:
+        event.widget.delete(0, tk.END)  # delete all the text in the entry
+        event.widget.config(fg='black')  # change text color to black
 
 def on_focusout(event, message):
     """Function that gets called when focus is moved out of entry field."""
@@ -92,10 +93,11 @@ file_path_label = ttk.Label(frame, text="Folder Path:")
 file_path_label.grid(row=1, column=0, sticky=tk.W)
 
 file_path_entry = tk.Entry(frame, width=40)
-file_path_entry.insert(2, 'Enter file path here...')
+file_path_entry.insert(0, 'Enter file path here...')
 file_path_entry.config(fg='grey')
-file_path_entry.bind('<FocusIn>', lambda event, message='Enter file path here...': on_entry_click(event, message))
-file_path_entry.bind('<FocusOut>', lambda event, message='Enter file path here...': on_focusout(event, message))
+instruction='Enter file path here...'
+file_path_entry.bind('<FocusIn>', lambda event: on_entry_click(event, instruction))
+file_path_entry.bind('<FocusOut>', lambda event: on_focusout(event, instruction))
 file_path_entry.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
 
 button = ttk.Button(frame, text="Browse", command = get_directory_location)
