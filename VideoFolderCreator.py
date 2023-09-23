@@ -18,28 +18,34 @@ def get_directory_location():
         file_path_entry.insert(0, folder_selected)
 
 
+def remove_first_8_chars_serial(serial_number):
+    return serial_number[8:]
+
 def get_folder_name():
     input_text = text_area.get("1.0", tk.END).strip()
     server = re.search(r"Server: (http://[^\s]+)", input_text).group(1).split("//")[-1].replace(".", "").replace(":", "")
     company = re.search(r"Company: ([^\nFirmware]+)", input_text).group(1).replace(" ", "")
     firmware_version = re.search(r"Firmware Version: ([^\n]+)", input_text).group(1).replace(".", "")
     site = re.search(r"Site: ([^\nDevice]+)", input_text).group(1).replace(" ", "")
-    device_serial = re.search(r"Device Serial: ([^\nVideos]+)", input_text).group(1).replace("00000000", "")
-    
+    device_serial = remove_first_8_chars_serial(re.search(r"Device Serial: ([^\nVideos]+)", input_text).group(1))
+
     # Create the folder name
     folder_name = f"{company}_{site}_{device_serial}_{server}_{firmware_version}"
 
     return folder_name
 
 def create_folder():
-    # Get the location for the directory
-    base_directory = get_directory_location()
-    
-    if not base_directory:  # If the user cancels the directory selection
-        return
+    # Get the base directory
 
     # Create the folder name
     folder_name = get_folder_name()
+
+    # Show the synthesized folder name
+    label = tk.Label(root, text=folder_name)
+    label.grid(row=5, column=0, sticky=tk.W)
+
+    # Get the base directory
+    base_directory = file_path_entry.get()
 
     # Create the full path
     full_path = os.path.join(base_directory, folder_name)
@@ -52,6 +58,8 @@ def create_folder():
         messagebox.showerror("Error", f"Folder '{folder_name}' already exists.")
     except Exception as e:
         messagebox.showerror("Error", str(e))
+
+# GUI Method ---------------------------------------------------------------
 
 def on_entry_click(event, message):
     """Function that gets called whenever entry is clicked."""
@@ -66,7 +74,7 @@ def on_focusout(event, message):
 
 def on_text_focus_in(event):
     text_area.delete("1.0", tk.END)  # delete all the text in the text widget
-    text_area.config(fg='white')  # change text color to white
+    text_area.config(fg='black')  # change text color to white
 
 def on_text_focus_out(event):
     content = text_area.get("1.0", tk.END).strip()
@@ -74,7 +82,7 @@ def on_text_focus_out(event):
         text_area.insert("1.0", message)
         text_area.config(fg='grey')
 
-# GUI code
+# GUI code-----------------------------------------------------------------
 root = tk.Tk()
 root.title("Folder Name Converter")
 
@@ -96,7 +104,7 @@ button = ttk.Button(frame, text="Browse", command = get_directory_location)
 button.grid(row=1, column=0, sticky=tk.E, pady=1)
 
 # To insert video folder name information from Verification Tracker
-message = """Server: http://footfallcounter.com
+sample_format = """Server: http://footfallcounter.com
 Company: SOJAO
 Firmware Version: 4.6.0
 Company Serial: 15F010245232
@@ -109,14 +117,17 @@ Local Date Time:
 """
 
 text_area = tk.Text(frame, wrap=tk.WORD, width=40, height=10)
-text_area.insert("1.0", message)
+text_area.insert("1.0", sample_format)
 text_area.config(fg='grey')
 text_area.bind('<FocusIn>', on_text_focus_in)
 text_area.bind('<FocusOut>', on_text_focus_out)
 text_area.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
 
+
 # To create video folder
 button = ttk.Button(frame, text="Create Video Folder", command = create_folder)
-button.grid(row=5, column=0, sticky=tk.W, pady=10)
+button.grid(row=6, column=0, sticky=tk.W, pady=10)
+
 
 root.mainloop()
+
