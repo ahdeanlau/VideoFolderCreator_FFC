@@ -32,12 +32,11 @@ def simplify_server_name(server_name):
 def get_folder_name():
     """Get the folder name from the input text from the text_area"""
     input_text = text_area.get("1.0", tk.END).strip()
-    server = simplify_server_name(re.search(r"Server: (http://[^\s]+)", input_text).group(1).split("//")[-1].replace(".com","").replace(".", "").replace(":", ""))
-    company = re.search(r"Company: ([^\nFirmware]+)", input_text).group(1).replace(" ", "")
+    server = simplify_server_name(re.search(r"Server: ([^\s]+)", input_text).group(1).split("//")[-1].replace(".com","").replace(".", "").replace(":", "").replace("/", ""))
+    company = re.search(r"Company: ([^\n]+)", input_text).group(1).replace(" ", "")
     firmware_version = re.search(r"Firmware Version: ([^\n]+)", input_text).group(1).replace(".", "")
-    site = re.search(r"Site: ([^\nDevice]+)", input_text).group(1).replace(" ", "")
-    device_serial = remove_first_8_chars_serial(re.search(r"Device Serial: ([^\nVideos]+)", input_text).group(1))
-
+    site = re.search(r"Site: ([^\n]+)", input_text).group(1).replace(" ", "")
+    device_serial = remove_first_8_chars_serial(re.search(r"Device Serial: ([^\n]+)", input_text).group(1))
 
     # Create the folder name
     folder_name = f"{company}_{site}_{device_serial}_{server}_{firmware_version}"
@@ -59,13 +58,13 @@ def create_folder():
     full_path = os.path.join(base_directory, folder_name)
 
     # Create the folder
-    try:
-        os.makedirs(full_path)
-        messagebox.showinfo("Success", f"Folder '{folder_name}' created successfully.")
-    except FileExistsError:
-        messagebox.showerror("Error", f"Folder '{folder_name}' already exists.")
-    except Exception as e:
-        messagebox.showerror("Error", str(e))
+    # try:
+    #     os.makedirs(full_path)
+    #     messagebox.showinfo("Success", f"Folder '{folder_name}' created successfully.")
+    # except FileExistsError:
+    #     messagebox.showerror("Error", f"Folder '{folder_name}' already exists.")
+    # except Exception as e:
+    #     messagebox.showerror("Error", str(e))
 
 # GUI Method ---------------------------------------------------------------
 
@@ -137,10 +136,6 @@ text_area.config(fg='grey')
 text_area.bind('<FocusIn>', lambda event: on_text_focus_in(sample_format))
 text_area.bind('<FocusOut>', lambda event: on_text_focus_out(sample_format))
 text_area.grid(row=4, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
-
-# # Show the synthesized folder name
-# folder_name_label = tk.Label(frame, text="Hello World")
-# folder_name_label.grid(row=5, column=0, sticky=tk.W)
 
 # To create video folder
 button = ttk.Button(frame, text="Create Video Folder", command = create_folder)
