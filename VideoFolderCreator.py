@@ -32,7 +32,7 @@ def simplify_server_name(server_name):
 def get_folder_name():
     """Get the folder name from the input text from the text_area"""
     input_text = text_area.get("1.0", tk.END).strip()
-    server = simplify_server_name(re.search(r"Server: ([^\s]+)", input_text).group(1).split("//")[-1].replace(".com","").replace(".", "").replace(":", "").replace("/", ""))
+    server = simplify_server_name(re.search(r"Server: ([^\n]+)", input_text).group(1).split("//")[-1].replace(".com","").replace(".", "").replace(":", "").replace("/", ""))
     company = re.search(r"Company: ([^\n]+)", input_text).group(1).replace(" ", "")
     firmware_version = re.search(r"Firmware Version: ([^\n]+)", input_text).group(1).replace(".", "")
     site = re.search(r"Site: ([^\n]+)", input_text).group(1).replace(" ", "")
@@ -58,13 +58,13 @@ def create_folder():
     full_path = os.path.join(base_directory, folder_name)
 
     # Create the folder
-    # try:
-    #     os.makedirs(full_path)
-    #     messagebox.showinfo("Success", f"Folder '{folder_name}' created successfully.")
-    # except FileExistsError:
-    #     messagebox.showerror("Error", f"Folder '{folder_name}' already exists.")
-    # except Exception as e:
-    #     messagebox.showerror("Error", str(e))
+    try:
+        os.makedirs(full_path)
+        messagebox.showinfo("Success", f"Folder '{folder_name}' created successfully.")
+    except FileExistsError:
+        messagebox.showerror("Error", f"Folder '{folder_name}' already exists.")
+    except Exception as e:
+        messagebox.showerror("Error", str(e))
 
 # GUI Method ---------------------------------------------------------------
 
