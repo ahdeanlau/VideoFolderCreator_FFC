@@ -1,6 +1,7 @@
 import re
 import os
 import tkinter as tk
+import _tkinter
 from tkinter import ttk
 from tkinter import messagebox
 from tkinter import filedialog
